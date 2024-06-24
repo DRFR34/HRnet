@@ -1,0 +1,99 @@
+@import '../../assets/scss/VarAndMixins.scss';
+
+.tableContainer {
+
+    background-color: $white-color; ;
+    width: 80%;
+    @media screen and (max-width: 768px) {
+       
+        margin: 0;
+    }
+}
+
+.employeeTable{
+    width: 100%;
+   border-collapse: collapse; 
+
+   @media screen and (max-width: 768px) {
+    
+       padding: 0 3px;
+   }
+}
+
+
+tr {
+    position: relative;
+    height: 60px;
+    
+}
+
+.tbodyRaw{
+position: relative;
+
+
+
+}
+
+
+
+tbody tr:active{
+    background-color: $green-light-color;
+    // color:$white-color
+}
+
+tr:nth-child(even) {
+    background-color: $grey-Xlight-color;
+    
+
+}
+
+td {
+    padding: 8px;
+    border: 1px solid $white-color;
+    @media screen and (max-width: 768px) {
+        // border: 2px solid $green-light-color;
+        padding: 1px;
+        font-size: 1rem;
+    }
+}
+
+
+th {
+    border: 4px solid $green-color;
+    padding: 4px;
+    @media screen and (max-width: 768px) {
+        border: 2px solid $green-color;
+        padding: 1px;
+        font-size: 1rem;
+    }
+
+    
+    background-color: $green-color;
+
+    color: $white-color;
+    font-weight: 500;
+
+    cursor: pointer;
+ 
+    & .thContent{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        @media screen and (max-width: 768px) {
+            flex-direction: column;
+             & .labelName{
+        }
+           
+           
+        }
+
+      
+         
+    
+            & .inactive {
+               
+                // color: $green-light-color;
+    }
+
+    }
+}
