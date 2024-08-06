@@ -1,7 +1,8 @@
 @import '../../assets/scss/VarAndMixins.scss';
 
-.paginationBar {
-    padding: 1.25rem 0;
+.paginationBar {    
+    max-width: 94vw;
+    padding: 1.25rem;
     display: flex;
     justify-content: space-between;
 
