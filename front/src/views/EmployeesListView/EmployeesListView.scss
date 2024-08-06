@@ -1,9 +1,13 @@
 @import '../../assets/scss/VarAndMixins.scss';
 
-.tableContainer {   
-    margin: 0 2vw;
-    max-width: 95vw;
+.tableContainer { 
     overflow-x:auto;
+    @media screen and (max-width: 768px) {
+        margin: 0 2vw;
+        max-width: 95vw;
+    }
+   
+    
 }
 
 
