@@ -1,0 +1,19 @@
+@import '../../assets/scss/VarAndMixins.scss';
+
+.MsgWrapper {
+    width: 100%;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+
+    &__title {
+        color: $green-color;
+    }
+
+    &__text {
+        color: $black-color;
+    }   
+}
