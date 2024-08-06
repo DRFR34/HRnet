@@ -1,9 +1,12 @@
 @import '../../assets/scss/VarAndMixins.scss';
 
 .toolsWrapper {
-    margin: 0 2vw;
-    max-width: 96vw;
     padding: 1.25rem;
+    @media screen and (max-width: 768px) {
+        margin: 0 2vw;
+        max-width: 96vw;
+        
+    }
 
     &__form {
         display: flex;
