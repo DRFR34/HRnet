@@ -1,0 +1,70 @@
+@import '../../assets/scss/VarAndMixins.scss';
+
+.PE-wrapper {
+    height: 120px;
+    display: flex;
+    border-top:$grey-light-color 1px solid;
+    border-radius:  0 0  10px 10px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 30px 20px;
+    transition: .5s;    
+
+    h3 {
+        padding: 10px 0 0;
+        font-weight: 500;
+        color: $green-color;
+    }
+
+    &__ShowOrHide {
+        bottom: -10px;
+        right: 5px;
+        padding: 10px 5px;
+        transform: rotate(180deg);
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        font-weight: 500;
+        color: $white-color;
+
+        &:hover {
+            opacity: 0.7;
+            transform: scale(1.1);
+            transform: rotate(180deg);
+        }
+
+        &.expanded {
+            top: 0px;
+            bottom: unset;
+            transform: rotate(0deg);
+        }
+    }
+
+
+    &__buttonsBox {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 10px 10px;
+
+        &__btn {
+            margin: 0 10px;
+            padding: 10px 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: $white-color;
+            background-color: $green-color;
+
+            &:hover {
+                background-color: $green-light-color;
+                color: $green-color;
+                transform: scale(1.1);
+            }
+        }
+    }
+}
