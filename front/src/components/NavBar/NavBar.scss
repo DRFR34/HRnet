@@ -1,0 +1,48 @@
+@import '../../assets/scss/VarAndMixins.scss';
+.nav{
+   padding: 0 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;}
+
+    .nav__logo{
+        height: 80px;
+        width: 80px;
+        @media screen and (max-width: 768px) {
+            height: 60px;
+            width: 60px;            
+        }
+    }
+
+.nav__links {   
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 20px;
+}
+
+.nav__link{
+    padding: 5px;
+    text-decoration: none;
+    color: $green-color;
+    font-weight: 500;
+
+    &.isActive{
+        border-bottom: 2px solid $green-color;
+        color: $green-color;
+        cursor: default;
+        &:hover{
+            text-decoration: none;
+            background-color:$white-color;
+        }
+       
+    }
+
+    &:hover{
+        background-color: $green-light-color;
+
+    }
+}
