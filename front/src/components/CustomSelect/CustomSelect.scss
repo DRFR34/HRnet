@@ -1,0 +1,95 @@
+@import '../../assets/scss/VarAndMixins.scss';
+
+
+.customSelect {
+
+    position: relative;
+    width: 6.25rem; 
+
+    &__trigger {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        width: 6.25rem; 
+        height: 1.375rem; 
+        border: 0.0625rem solid $green-color;
+        border-radius: 0.3125rem; 
+        cursor: pointer;
+
+        &:hover {
+            border-color: $green-color;
+            background-color: rgba($green-light-color, 0.7);
+        }
+
+        &__text {
+            width: 5.3125rem; 
+            padding: 0 0.3125rem; 
+            line-height: 1.125rem; 
+            font-size: 1rem; 
+            font-weight: 600;
+            text-align: center;
+            color: $green-color;
+        }
+
+        &__arrows {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 0.9375rem;        
+            height: 1.25rem; 
+            color: $green-color;
+            cursor: pointer;
+
+            &__upDownicon {
+                width: 0.625rem; 
+                height: 0.625rem; 
+            }
+        }
+    }
+
+    &__optionsList {
+        z-index: 10;
+        top: 0;
+        left: 0;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        width: 6.25rem; 
+        border: solid 0.0625rem $green-color;
+        border-radius: 0.3125rem; 
+        max-height: 18.75rem; 
+        padding: 0.06rem 0.3125rem 0.125rem ;
+        overflow-y: auto;
+        background-color: $white-color;
+
+        //  Scrollbar styling
+        &::-webkit-scrollbar {
+            width: 0.375rem; 
+        }
+
+        &::-webkit-scrollbar-track {
+            background: $grey-Xlight-color;
+            width: 0.25rem; 
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: $green-color;
+            border-radius: 0.625rem;
+            border: 0.125rem solid $grey-Xlight-color;
+            min-height: 1.875rem; 
+        }
+
+        &__option {
+            display: block;
+            cursor: pointer;
+            padding: 0.18rem; 
+            text-align: center;
+            font-size: 0.875rem; 
+            font-weight: 500;
+
+            &:hover {
+                background-color: $green-light-color;
+            }
+        }
+    }
+}
