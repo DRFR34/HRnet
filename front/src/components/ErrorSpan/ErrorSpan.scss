@@ -1,0 +1,7 @@
+@import '../../assets/scss/VarAndMixins.scss';
+
+.error-message{
+    display:block;
+    font-size: small;
+    color: $error-color;
+}
