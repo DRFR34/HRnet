@@ -1,70 +1,50 @@
-# Getting Started with Create React App
+# HRnet
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<div align="center">
+<br>
+<img src="/frontend/src/assets/img/demoP14.gif" alt="HRnet" width="500" style="display: block; margin: 20px auto 0;" />
+</div>
 
-## Available Scripts
+HRnet is the fourteenth project of the OpenClassrooms training “Javascript Application Developer - React”.
+This project is focused on converting the existing HRnet application from jQuery to React.
+It involves refactoring key pages, optimizing performance, and documenting the technical process. The goal is to reduce technical debt and improve the overall performance of the web application.
 
-In the project directory, you can run:
+## Special thanks
 
-### `npm start`
+To Mr. Emeric Tourel, my mentor, for his guidance and support during the development of this project, and throughout my training
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Installation
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Prerequisites
 
-### `npm test`
+- [Git](https://git-scm.com)
+- [Node](https://nodejs.org/en/) or [Yarn](https://yarnpkg.com/) for terminal commands
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Dependencies used
 
-### `npm run build`
+- react: ^18.3.1,
+- react-dom: ^18.3.1,
+- react-router-dom: ^6.23.1,
+- react-hook-form: ^7.51.4,
+- react-scripts: 5.0.1,
+- react-icons: ^5.2.1,
+- redux: ^5.0.1,
+- react-redux: ^9.1.2,
+- @reduxjs/toolkit: ^2.2.6,
+- redaxios: ^0.5.1,
+- sass: ^1.77.5,
+- react-sortable-customizable-table: ^2.0.2,
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Installation process
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. Clone the repository :
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- `git clone https://github.com/DRFR34/HRnet`
 
-### `npm run eject`
+2. Install all dependencies for Front-end:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- `npm install` or `yarn`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. Launch front-end on port 3000 (default port):
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- `npm start` or `yarn start`
