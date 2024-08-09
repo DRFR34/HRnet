@@ -8,7 +8,7 @@ import './EmployeeCreationForm.scss';
 import { unwrapResult } from '@reduxjs/toolkit';
 import ErrorSpan from '../ErrorSpan/ErrorSpan.jsx';
 import MonthIcon from '../IconsComponents/MonthIcon.jsx';
-
+import CustomSelect2 from '../CustomSelect2/CustomSelect2.jsx';
 
 export default function EmployeeCreationForm() {
     const dispatch = useDispatch();
@@ -35,7 +35,7 @@ export default function EmployeeCreationForm() {
         opt1: 'yyyy/MM/dd',
         opt2: 'MM/dd/yyyy',
         opt3: 'dd/MM/yyyy',
-    }
+    };
     const dateFormat = FormatsOfDate.opt2;
 
     const birthDateInputRef = useRef(null);
@@ -44,7 +44,6 @@ export default function EmployeeCreationForm() {
     const formatDate = (date, format) => {
         if (!date) return '';
         const d = new Date(date);
-        // padStart() adds leading 0 if the date's lenght is less than 2'
         const day = String(d.getDate()).padStart(2, '0');
         const month = String(d.getMonth() + 1).padStart(2, '0');
         const year = d.getFullYear();
@@ -61,29 +60,55 @@ export default function EmployeeCreationForm() {
         }
     };
 
-    const handleChange = (e) => {
+    const isValidDate = (dateString) => {
+        const regex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+        if (!regex.test(dateString)) return false;
 
+        const parts = dateString.split('/');
+        const month = parseInt(parts[0], 10);
+        const day = parseInt(parts[1], 10);
+        const year = parseInt(parts[2], 10);
+
+        const date = new Date(year, month - 1, day);
+        return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+    };
+
+    const handleChange = (e) => {
         const changedFieldName = e.target.name;
-        const changedFieldvalue = e.target.value;
+        const changedFieldValue = e.target.value;
+
+        // Valider seulement si le champ est une date
+        if (changedFieldName === 'birthDate' || changedFieldName === 'startDate') {
+            if (!isValidDate(changedFieldValue)) {
+                setFieldsOnError(prevErrorsState => ({
+                    ...prevErrorsState,
+                    [changedFieldName]: 'Date must be in MM/DD/YYYY format.'
+                }));
+            } else {
+                setFieldsOnError(prevErrorsState => ({
+                    ...prevErrorsState,
+                    [changedFieldName]: ''
+                }));
+            }
+        }
 
         setFormData(prevState => ({
             ...prevState,
-            [changedFieldName]: changedFieldvalue,
+            [changedFieldName]: changedFieldValue,
         }));
-        validateField(changedFieldName, changedFieldvalue); // Validate the field on change
+
+        validateField(changedFieldName, changedFieldValue); // Valider le champ sur changement
     };
 
     const handleBlur = (e) => {
-
         const blurredFieldName = e.target.name;
-        const blurredFieldvalue = e.target.value;
+        const blurredFieldValue = e.target.value;
 
         setFieldsBlurred(prevState => ({ ...prevState, [blurredFieldName]: true }));
-        validateField(blurredFieldName, blurredFieldvalue);
+        validateField(blurredFieldName, blurredFieldValue);
     };
 
     const handleDateChange = (field, date) => {
-
         const value = date ? formatDate(date, dateFormat) : '';
 
         setFormData(prevFormState => ({
@@ -95,7 +120,6 @@ export default function EmployeeCreationForm() {
     };
 
     const validateField = (fieldName, fieldValue) => {
-
         let errorMsg = '';
 
         switch (fieldName) {
@@ -106,20 +130,22 @@ export default function EmployeeCreationForm() {
                 }
                 break;
             case 'birthDate':
-                if (!fieldValue || new Date(fieldValue) >= new Date(new Date().setFullYear(new Date().getFullYear() - 16))) {
-                    errorMsg = !fieldValue ? 'Must contain a valid date.' : 'The employee must be over 16 years old.';
+                if (!fieldValue || !isValidDate(fieldValue)) {
+                    errorMsg = 'Date must be in MM/DD/YYYY format.';
+                } else if (new Date(fieldValue) >= new Date(new Date().setFullYear(new Date().getFullYear() - 16))) {
+                    errorMsg = 'The employee must be over 16 years old.';
                 }
                 break;
             case 'startDate':
-                if (!fieldValue) {
-                    errorMsg = 'The date must be valid.';
+                if (!fieldValue || !isValidDate(fieldValue)) {
+                    errorMsg = 'The date must be valid and in MM/DD/YYYY format.';
                 }
                 break;
             case 'street':
             case 'city':
             case 'state':
             case 'department':
-                if (!fieldValue.trim()) { //trim() removes leading and trailing spaces
+                if (!fieldValue.trim()) { // trim() removes leading and trailing spaces
                     errorMsg = 'This field must not be empty.';
                 }
                 break;
@@ -139,7 +165,7 @@ export default function EmployeeCreationForm() {
 
 
     const isFormValid = () => {
-        return Object.values(fieldsOnError).every(x => x === "") && Object.values(formData).every(x => x !== "");
+        return Object.values(fieldsOnError).every(x => x === '') && Object.values(formData).every(x => x !== '');
     };
 
     const handleSubmit = async (e) => {
@@ -188,7 +214,7 @@ export default function EmployeeCreationForm() {
 
         } finally {
             dispatch(setIsSubmitting(false));
-            console.log("Form submission ended.");
+            console.log('Form submission ended.');
         }
     };
 
@@ -207,9 +233,9 @@ export default function EmployeeCreationForm() {
                     <legend>Identity information</legend>
 
                     <div className='form__fieldset__element'>
-                        <label 
-                        className='form__fieldset__element__label'
-                        htmlFor="firstName">First name</label>
+                        <label
+                            className='form__fieldset__element__label'
+                            htmlFor="firstName">First name</label>
                         <input
                             id='firstName'
                             name='firstName'
@@ -223,9 +249,9 @@ export default function EmployeeCreationForm() {
                     </div>
 
                     <div className='form__fieldset__element'>
-                        <label 
-                        className='form__fieldset__element__label'
-                        htmlFor="lastName">Last name</label>
+                        <label
+                            className='form__fieldset__element__label'
+                            htmlFor="lastName">Last name</label>
                         <input
                             id='lastName'
                             name='lastName'
@@ -239,15 +265,16 @@ export default function EmployeeCreationForm() {
                     </div>
 
                     <div className='form__fieldset__element'>
-                        <label 
-                        className='form__fieldset__element__label'
-                        htmlFor="birthDate">Date of birth</label>
+                        <label
+                            className='form__fieldset__element__label'
+                            htmlFor="birthDate">Date of birth</label>
                         <div className="datePickerWrapper">
                             <input
                                 id='birthDate'
                                 name='birthDate'
                                 className={`form__fieldset__element__input ${fieldsOnError.birthDate ? 'form__fieldset__element__input--onError' : ''}`}
                                 type="text"
+                                placeholder="MM/DD/YYYY"  // Add placeholder to indicate format
                                 value={formData.birthDate}
                                 onChange={handleChange}
                                 onFocus={() => setShowDatePicker({ ...showDatePicker, birthDate: true })}
@@ -267,7 +294,7 @@ export default function EmployeeCreationForm() {
                             </button>
                             {showDatePicker.birthDate && (
                                 <CustomDatePicker
-                                    selectedDate={formData.birthDate ? new Date(formData.birthDate) : new Date()}
+                                    selectedDate={isValidDate(formData.birthDate) ? new Date(formData.birthDate) : new Date()}
                                     onDateChanged={(date) => handleDateChange('birthDate', date)}
                                     onClose={() => handleCloseDatePicker('birthDate')}
                                 />
@@ -282,15 +309,16 @@ export default function EmployeeCreationForm() {
                     <legend>Professional information</legend>
 
                     <div className='form__fieldset__element'>
-                        <label 
-                        className='form__fieldset__element__label'
-                        htmlFor="startDate">Start date</label>
+                        <label
+                            className='form__fieldset__element__label'
+                            htmlFor="startDate">Start date</label>
                         <div className="datePickerWrapper">
                             <input
                                 id='startDate'
                                 name='startDate'
                                 className={`form__fieldset__element__input ${fieldsOnError.startDate ? 'form__fieldset__element__input--onError' : ''}`}
                                 type="text"
+                                placeholder="MM/DD/YYYY"  // Add placeholder to indicate format
                                 value={formData.startDate}
                                 onChange={handleChange}
                                 onFocus={() => setShowDatePicker({ ...showDatePicker, startDate: true })}
@@ -310,7 +338,7 @@ export default function EmployeeCreationForm() {
                             </button>
                             {showDatePicker.startDate && (
                                 <CustomDatePicker
-                                    selectedDate={formData.startDate ? new Date(formData.startDate) : new Date()}
+                                    selectedDate={isValidDate(formData.startDate) ? new Date(formData.startDate) : new Date()}
                                     onDateChanged={(date) => handleDateChange('startDate', date)}
                                     onClose={() => handleCloseDatePicker('startDate')}
                                 />
@@ -321,11 +349,11 @@ export default function EmployeeCreationForm() {
 
                     <div className='form__fieldset__element'>
                         <label
-                        className='form__fieldset__element__label'
-                        htmlFor="department">Department</label>
-                        <select
-                            id='department'
-                            name='department'
+                            className='form__fieldset__element__label'
+                            htmlFor="department">Department</label>
+                        <CustomSelect2
+                            id="department"
+                            name="department"
                             className={`form__fieldset__element__input ${fieldsOnError.department ? 'form__fieldset__element__input--onError' : ''}`}
                             value={formData.department}
                             onChange={handleChange}
@@ -337,7 +365,8 @@ export default function EmployeeCreationForm() {
                                     {department.label}
                                 </option>
                             ))}
-                        </select>
+                        </CustomSelect2>
+
                         {fieldsBlurred.department && <ErrorSpan message={fieldsOnError.department} />}
                     </div>
 
@@ -347,9 +376,9 @@ export default function EmployeeCreationForm() {
                     <legend>Address</legend>
 
                     <div className='form__fieldset__element'>
-                        <label 
-                        className='form__fieldset__element__label'
-                        htmlFor="street">Street</label>
+                        <label
+                            className='form__fieldset__element__label'
+                            htmlFor="street">Street</label>
                         <input
                             id='street'
                             name='street'
@@ -363,9 +392,9 @@ export default function EmployeeCreationForm() {
                     </div>
 
                     <div className='form__fieldset__element'>
-                        <label 
-                        className='form__fieldset__element__label'
-                        htmlFor="city">City</label>
+                        <label
+                            className='form__fieldset__element__label'
+                            htmlFor="city">City</label>
                         <input
                             id='city'
                             name='city'
@@ -379,12 +408,13 @@ export default function EmployeeCreationForm() {
                     </div>
 
                     <div className='form__fieldset__element'>
-                        <label 
-                        className='form__fieldset__element__label'
-                        htmlFor="state">State</label>
-                        <select
-                            id='state'
-                            name='state'
+                        <label
+                            className='form__fieldset__element__label'
+                            htmlFor="state">State</label>
+
+                        <CustomSelect2
+                            id="state"
+                            name="state"
                             className={`form__fieldset__element__input ${fieldsOnError.state ? 'form__fieldset__element__input--onError' : ''}`}
                             value={formData.state}
                             onChange={handleChange}
@@ -396,14 +426,15 @@ export default function EmployeeCreationForm() {
                                     {state.label}
                                 </option>
                             ))}
-                        </select>
+                        </CustomSelect2>
+
                         {fieldsBlurred.state && <ErrorSpan message={fieldsOnError.state} />}
                     </div>
 
                     <div className='form__fieldset__element'>
-                        <label 
-                        className='form__fieldset__element__label'
-                        htmlFor="zipCode">Zip code</label>
+                        <label
+                            className='form__fieldset__element__label'
+                            htmlFor="zipCode">Zip code</label>
                         <input
                             id='zipCode'
                             name='zipCode'
