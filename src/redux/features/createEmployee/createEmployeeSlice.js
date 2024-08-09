@@ -18,6 +18,19 @@ const createEmployeeSlice = createSlice({
   name: 'createEmployee',
   initialState: {
     employees: [],
+    formData: {
+      firstName: '',
+      lastName: '',
+      birthDate: '',
+      startDate: '',
+      street: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      department: '',
+    },
+    fieldsOnError: {},
+    fieldsBlurred: {},
     loading: false,
     error: null,
     modalIsVisible: false,
@@ -35,7 +48,42 @@ const createEmployeeSlice = createSlice({
     },
     setIsSubmitting: (state, action) => {
       state.isSubmitting = action.payload;
-    }
+    },
+    setFormData: (state, action) => {
+      state.formData = {
+        ...state.formData,
+        ...action.payload,
+      };
+    },
+    setFieldsOnError: (state, action) => {
+      state.fieldsOnError = {
+        ...state.fieldsOnError,
+        ...action.payload,
+      };
+    },
+    setFieldsBlurred: (state, action) => {
+      state.fieldsBlurred = {
+        ...state.fieldsBlurred,
+        ...action.payload,
+      };
+    },
+    resetForm: (state) => {
+      state.formData = {
+        firstName: '',
+        lastName: '',
+        birthDate: '',
+        startDate: '',
+        street: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        department: '',
+      };
+      state.fieldsOnError = {};
+      state.fieldsBlurred = {};
+      state.isSubmitting = false;
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -60,5 +108,5 @@ const createEmployeeSlice = createSlice({
   }
 });
 
-export const { hideModal, setError, showModal, setIsSubmitting } = createEmployeeSlice.actions;
+export const { hideModal, setError, showModal, setIsSubmitting, setFormData, setFieldsOnError, setFieldsBlurred, resetForm } = createEmployeeSlice.actions;
 export default createEmployeeSlice.reducer;
