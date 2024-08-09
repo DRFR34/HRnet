@@ -1,5 +1,6 @@
 import './CustomSelect2.scss';
 import React, { useState, useRef, useEffect } from 'react';
+import ChevronDownIcon from '../IconsComponents/ChevronDownIcon';
 
 export default function CustomSelect2({
   id,
@@ -83,6 +84,13 @@ export default function CustomSelect2({
       >
         {selectedOptionLabel}
       </div>
+      <div
+      className={`customSelect2__toggle__icon ${isOpen ? 'open' : ''}`}
+      onClick={() => setIsOpen(!isOpen)}
+       >
+         <ChevronDownIcon/>
+      </div>
+     
       {isOpen && (
         <div className="customSelect2__options">
           {React.Children.map(children, (child) => (
