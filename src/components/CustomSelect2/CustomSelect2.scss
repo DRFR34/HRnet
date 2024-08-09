@@ -11,6 +11,26 @@
         cursor: pointer;
         background-color: $white-color;
 
+        &__icon {
+            // width: 1rem;
+            position: absolute;
+            top: 50%;
+            right: .625rem;
+            transform: translateY(-40%);
+            color: $green-color;
+            cursor: pointer;
+            transition: transform .2s ease-in-out;
+
+            & svg {
+                width: 1.2rem;
+                height: 1.2rem;
+            }
+
+            &.open {
+                transform: translateY(-50%) rotate(180deg);
+            }
+        }
+
         &.open {
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
