@@ -1,42 +1,24 @@
 import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createEmployee, showModal, setError, setIsSubmitting } from '../../redux/features/createEmployee/createEmployeeSlice.js';
+import { createEmployee, showModal, setError, setIsSubmitting, setFormData, setFieldsOnError, setFieldsBlurred, resetForm } from '../../redux/features/createEmployee/createEmployeeSlice.js';
 import CustomDatePicker from '../CustomDatePicker/CustomDatePicker.jsx';
 import usaStates from '../../assets/data/usaStates.js';
 import departments from '../../assets/data/wealthHealthDepts.js';
 import './EmployeeCreationForm.scss';
 import { unwrapResult } from '@reduxjs/toolkit';
-import ErrorSpan from '../ErrorSpan/ErrorSpan.jsx';
 import MonthIcon from '../IconsComponents/MonthIcon.jsx';
 import CustomSelect2 from '../CustomSelect2/CustomSelect2.jsx';
+import CEFormElement from '../CEFormElement/CEFormElement.jsx';
 
 export default function EmployeeCreationForm() {
     const dispatch = useDispatch();
-    const { error, isSubmitting } = useSelector(state => state.createEmployee);
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        birthDate: '',
-        startDate: '',
-        street: '',
-        city: '',
-        state: '',
-        zipCode: '',
-        department: '',
-    });
-    const [fieldsOnError, setFieldsOnError] = useState({});
-    const [fieldsBlurred, setFieldsBlurred] = useState({});
+    const { formData, fieldsOnError, isSubmitting, error } = useSelector(state => state.createEmployee);
     const [showDatePicker, setShowDatePicker] = useState({
         birthDate: false,
         startDate: false,
     });
 
-    const FormatsOfDate = {
-        opt1: 'yyyy/MM/dd',
-        opt2: 'MM/dd/yyyy',
-        opt3: 'dd/MM/yyyy',
-    };
-    const dateFormat = FormatsOfDate.opt2;
+    const dateFormat = 'MM/dd/yyyy';
 
     const birthDateInputRef = useRef(null);
     const startDateInputRef = useRef(null);
@@ -74,47 +56,29 @@ export default function EmployeeCreationForm() {
     };
 
     const handleChange = (e) => {
-        const changedFieldName = e.target.name;
-        const changedFieldValue = e.target.value;
+        const { name, value } = e.target;
 
-        // Valider seulement si le champ est une date
-        if (changedFieldName === 'birthDate' || changedFieldName === 'startDate') {
-            if (!isValidDate(changedFieldValue)) {
-                setFieldsOnError(prevErrorsState => ({
-                    ...prevErrorsState,
-                    [changedFieldName]: 'Date must be in MM/DD/YYYY format.'
-                }));
+        if (name === 'birthDate' || name === 'startDate') {
+            if (!isValidDate(value)) {
+                dispatch(setFieldsOnError({ [name]: 'Date must be in MM/DD/YYYY format.' }));
             } else {
-                setFieldsOnError(prevErrorsState => ({
-                    ...prevErrorsState,
-                    [changedFieldName]: ''
-                }));
+                dispatch(setFieldsOnError({ [name]: '' }));
             }
         }
 
-        setFormData(prevState => ({
-            ...prevState,
-            [changedFieldName]: changedFieldValue,
-        }));
-
-        validateField(changedFieldName, changedFieldValue); // Valider le champ sur changement
+        dispatch(setFormData({ [name]: value }));
+        validateField(name, value);
     };
 
     const handleBlur = (e) => {
-        const blurredFieldName = e.target.name;
-        const blurredFieldValue = e.target.value;
-
-        setFieldsBlurred(prevState => ({ ...prevState, [blurredFieldName]: true }));
-        validateField(blurredFieldName, blurredFieldValue);
+        const { name, value } = e.target;
+        dispatch(setFieldsBlurred({ [name]: true }));
+        validateField(name, value);
     };
 
     const handleDateChange = (field, date) => {
         const value = date ? formatDate(date, dateFormat) : '';
-
-        setFormData(prevFormState => ({
-            ...prevFormState,
-            [field]: value,
-        }));
+        dispatch(setFormData({ [field]: value }));
         validateField(field, value);
         handleCloseDatePicker(field);
     };
@@ -145,7 +109,7 @@ export default function EmployeeCreationForm() {
             case 'city':
             case 'state':
             case 'department':
-                if (!fieldValue.trim()) { // trim() removes leading and trailing spaces
+                if (!fieldValue.trim()) {
                     errorMsg = 'This field must not be empty.';
                 }
                 break;
@@ -157,12 +121,9 @@ export default function EmployeeCreationForm() {
             default:
                 break;
         }
-        setFieldsOnError(prevErrorsState => ({
-            ...prevErrorsState,
-            [fieldName]: errorMsg
-        }));
-    };
 
+        dispatch(setFieldsOnError({ [fieldName]: errorMsg }));
+    };
 
     const isFormValid = () => {
         return Object.values(fieldsOnError).every(x => x === '') && Object.values(formData).every(x => x !== '');
@@ -170,10 +131,10 @@ export default function EmployeeCreationForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (isSubmitting) return; // Prevent a resubmission if already in progress
+        if (isSubmitting) return;
 
         if (!isFormValid()) {
-            setFieldsBlurred({
+            dispatch(setFieldsBlurred({
                 firstName: true,
                 lastName: true,
                 birthDate: true,
@@ -183,30 +144,17 @@ export default function EmployeeCreationForm() {
                 state: true,
                 zipCode: true,
                 department: true,
-            });
+            }));
             return;
         }
 
-        dispatch(setIsSubmitting(true)); // initiate submission
+        dispatch(setIsSubmitting(true));
 
         try {
             const resultAction = await dispatch(createEmployee(formData));
-
             unwrapResult(resultAction);
             dispatch(showModal());
-            setFormData({
-                firstName: '',
-                lastName: '',
-                birthDate: '',
-                startDate: '',
-                street: '',
-                city: '',
-                state: '',
-                zipCode: '',
-                department: '',
-            });
-            setFieldsOnError({});
-            setFieldsBlurred({});
+            dispatch(resetForm());
 
         } catch (error) {
             console.error('Failed to create employee', error);
@@ -214,7 +162,6 @@ export default function EmployeeCreationForm() {
 
         } finally {
             dispatch(setIsSubmitting(false));
-            console.log('Form submission ended.');
         }
     };
 
@@ -232,10 +179,7 @@ export default function EmployeeCreationForm() {
                 <fieldset className='form__fieldset'>
                     <legend>Identity information</legend>
 
-                    <div className='form__fieldset__element'>
-                        <label
-                            className='form__fieldset__element__label'
-                            htmlFor="firstName">First name</label>
+                    <CEFormElement labClassName='form__fieldset__element__label' labHtmlFor="firstName" errorFieldName="firstName">
                         <input
                             id='firstName'
                             name='firstName'
@@ -245,13 +189,9 @@ export default function EmployeeCreationForm() {
                             onChange={handleChange}
                             onBlur={handleBlur}
                         />
-                        {fieldsBlurred.firstName && <ErrorSpan message={fieldsOnError.firstName} />}
-                    </div>
+                    </CEFormElement>
 
-                    <div className='form__fieldset__element'>
-                        <label
-                            className='form__fieldset__element__label'
-                            htmlFor="lastName">Last name</label>
+                    <CEFormElement labClassName='form__fieldset__element__label' labHtmlFor="lastName" errorFieldName="lastName">
                         <input
                             id='lastName'
                             name='lastName'
@@ -261,20 +201,16 @@ export default function EmployeeCreationForm() {
                             onChange={handleChange}
                             onBlur={handleBlur}
                         />
-                        {fieldsBlurred.lastName && <ErrorSpan message={fieldsOnError.lastName} />}
-                    </div>
+                    </CEFormElement>
 
-                    <div className='form__fieldset__element'>
-                        <label
-                            className='form__fieldset__element__label'
-                            htmlFor="birthDate">Date of birth</label>
+                    <CEFormElement labClassName='form__fieldset__element__label' labHtmlFor="birthDate" errorFieldName="birthDate">
                         <div className="datePickerWrapper">
                             <input
                                 id='birthDate'
                                 name='birthDate'
                                 className={`form__fieldset__element__input ${fieldsOnError.birthDate ? 'form__fieldset__element__input--onError' : ''}`}
                                 type="text"
-                                placeholder="MM/DD/YYYY"  // Add placeholder to indicate format
+                                placeholder="MM/DD/YYYY"
                                 value={formData.birthDate}
                                 onChange={handleChange}
                                 onFocus={() => setShowDatePicker({ ...showDatePicker, birthDate: true })}
@@ -300,25 +236,21 @@ export default function EmployeeCreationForm() {
                                 />
                             )}
                         </div>
-                        {fieldsBlurred.birthDate && <ErrorSpan message={fieldsOnError.birthDate} />}
-                    </div>
+                    </CEFormElement>
 
                 </fieldset>
 
                 <fieldset className='form__fieldset'>
                     <legend>Professional information</legend>
 
-                    <div className='form__fieldset__element'>
-                        <label
-                            className='form__fieldset__element__label'
-                            htmlFor="startDate">Start date</label>
+                    <CEFormElement labClassName='form__fieldset__element__label' labHtmlFor="startDate" errorFieldName="startDate">
                         <div className="datePickerWrapper">
                             <input
                                 id='startDate'
                                 name='startDate'
                                 className={`form__fieldset__element__input ${fieldsOnError.startDate ? 'form__fieldset__element__input--onError' : ''}`}
                                 type="text"
-                                placeholder="MM/DD/YYYY"  // Add placeholder to indicate format
+                                placeholder="MM/DD/YYYY"
                                 value={formData.startDate}
                                 onChange={handleChange}
                                 onFocus={() => setShowDatePicker({ ...showDatePicker, startDate: true })}
@@ -344,13 +276,9 @@ export default function EmployeeCreationForm() {
                                 />
                             )}
                         </div>
-                        {fieldsBlurred.startDate && <ErrorSpan message={fieldsOnError.startDate} />}
-                    </div>
+                    </CEFormElement>
 
-                    <div className='form__fieldset__element'>
-                        <label
-                            className='form__fieldset__element__label'
-                            htmlFor="department">Department</label>
+                    <CEFormElement labClassName='form__fieldset__element__label' labHtmlFor="department" errorFieldName="department">
                         <CustomSelect2
                             id="department"
                             name="department"
@@ -366,19 +294,14 @@ export default function EmployeeCreationForm() {
                                 </option>
                             ))}
                         </CustomSelect2>
-
-                        {fieldsBlurred.department && <ErrorSpan message={fieldsOnError.department} />}
-                    </div>
+                    </CEFormElement>
 
                 </fieldset>
 
                 <fieldset className='form__fieldset'>
                     <legend>Address</legend>
 
-                    <div className='form__fieldset__element'>
-                        <label
-                            className='form__fieldset__element__label'
-                            htmlFor="street">Street</label>
+                    <CEFormElement labClassName='form__fieldset__element__label' labHtmlFor="street" errorFieldName="street">
                         <input
                             id='street'
                             name='street'
@@ -388,13 +311,9 @@ export default function EmployeeCreationForm() {
                             onChange={handleChange}
                             onBlur={handleBlur}
                         />
-                        {fieldsBlurred.street && <ErrorSpan message={fieldsOnError.street} />}
-                    </div>
+                    </CEFormElement>
 
-                    <div className='form__fieldset__element'>
-                        <label
-                            className='form__fieldset__element__label'
-                            htmlFor="city">City</label>
+                    <CEFormElement labClassName='form__fieldset__element__label' labHtmlFor="city" errorFieldName="city">
                         <input
                             id='city'
                             name='city'
@@ -404,14 +323,9 @@ export default function EmployeeCreationForm() {
                             onChange={handleChange}
                             onBlur={handleBlur}
                         />
-                        {fieldsBlurred.city && <ErrorSpan message={fieldsOnError.city} />}
-                    </div>
+                    </CEFormElement>
 
-                    <div className='form__fieldset__element'>
-                        <label
-                            className='form__fieldset__element__label'
-                            htmlFor="state">State</label>
-
+                    <CEFormElement labClassName='form__fieldset__element__label' labHtmlFor="state" errorFieldName="state">
                         <CustomSelect2
                             id="state"
                             name="state"
@@ -427,14 +341,9 @@ export default function EmployeeCreationForm() {
                                 </option>
                             ))}
                         </CustomSelect2>
+                    </CEFormElement>
 
-                        {fieldsBlurred.state && <ErrorSpan message={fieldsOnError.state} />}
-                    </div>
-
-                    <div className='form__fieldset__element'>
-                        <label
-                            className='form__fieldset__element__label'
-                            htmlFor="zipCode">Zip code</label>
+                    <CEFormElement labClassName='form__fieldset__element__label' labHtmlFor="zipCode" errorFieldName="zipCode">
                         <input
                             id='zipCode'
                             name='zipCode'
@@ -444,8 +353,7 @@ export default function EmployeeCreationForm() {
                             onChange={handleChange}
                             onBlur={handleBlur}
                         />
-                        {fieldsBlurred.zipCode && <ErrorSpan message={fieldsOnError.zipCode} />}
-                    </div>
+                    </CEFormElement>
                 </fieldset>
 
                 <button
@@ -461,3 +369,4 @@ export default function EmployeeCreationForm() {
         </div>
     );
 }
+
