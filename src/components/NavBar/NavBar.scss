@@ -1,21 +1,30 @@
 @import '../../assets/scss/VarAndMixins.scss';
-.nav{
-   padding: 0 10px;
+
+.nav {
+    padding: 0 10px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;}
+    justify-content: space-between;
+}
 
-    .nav__logo{
-        height: 80px;
-        width: 80px;
-        @media screen and (max-width: 768px) {
-            height: 60px;
-            width: 60px;            
-        }
+.nav__logo {
+    height: 80px;
+    width: 80px;
+
+    @media screen and (max-width: 768px) {
+        height: 60px;
+        width: 60px;
     }
 
-.nav__links {   
+    &:hover {
+        transform: scale(1.3);
+        cursor: pointer;
+        background-color: transparent;
+    }
+}
+
+.nav__links {
     padding: 20px;
     display: flex;
     flex-direction: row;
@@ -24,24 +33,25 @@
     gap: 20px;
 }
 
-.nav__link{
+.nav__link {
     padding: 5px;
     text-decoration: none;
     color: $green-color;
     font-weight: 500;
 
-    &.isActive{
+    &.isActive {
         border-bottom: 2px solid $green-color;
         color: $green-color;
         cursor: default;
-        &:hover{
+
+        &:hover {
             text-decoration: none;
-            background-color:$white-color;
+            background-color: $white-color;
         }
-       
+
     }
 
-    &:hover{
+    &:hover {
         background-color: $green-light-color;
 
     }
