@@ -116,7 +116,7 @@ export default function EmployeesListView() {
             rowOddBgColor="#f2f2f2"
             rowHoverBgColor="#a4da879a"
             sortable={true}
-            dateFormat="yyyy-MM-dd"
+            dateFormat="MM/dd/yy"
           />
 
           {filteredData.length === 0 &&
