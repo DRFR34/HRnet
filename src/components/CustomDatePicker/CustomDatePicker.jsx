@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 import CustomSelect from '../CustomSelect/CustomSelect';
 import TodayIcon from '../IconsComponents/TodayIcon';
@@ -7,6 +8,17 @@ import RightIcon from '../IconsComponents/RightIcon';
 
 import './CustomDatePicker.scss';
 
+/**
+ * CustomDatePicker component renders a custom date picker UI.
+ * It allows users to select a specific date, navigate between months and years,
+ * and choose the current date using various controls.
+ * 
+ * @component
+ * @param {Object} props - The props that define this component.
+ * @param {string|Date} props.selectedDate - The currently selected date, passed as a string or Date object.
+ * @param {function(Date):void} props.onDateChanged - Callback function to handle the event when a date is selected.
+ * @param {function():void} props.onClose - Callback function to handle the event when the date picker is closed.
+ */
 export default function CustomDatePicker({ selectedDate, onDateChanged, onClose }) {
     const [currentDate, setCurrentDate] = useState(selectedDate ? new Date(selectedDate) : new Date());
     const datePickerRef = useRef(null);
@@ -34,7 +46,6 @@ export default function CustomDatePicker({ selectedDate, onDateChanged, onClose 
         newDate.setFullYear(newDate.getFullYear() + yearChange);
         setCurrentDate(newDate);
     };
-
 
     const handleDayClick = (day, monthChange) => {
         const newDate = new Date(currentDate);
@@ -183,3 +194,24 @@ export default function CustomDatePicker({ selectedDate, onDateChanged, onClose 
         </div>
     );
 }
+
+CustomDatePicker.propTypes = {
+    /**
+     * The currently selected date, passed as a string or Date object.
+     */
+    selectedDate: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.instanceOf(Date)
+    ]),
+
+    /**
+     * Callback function to handle the event when a date is selected.
+     * Receives the selected date as a Date object.
+     */
+    onDateChanged: PropTypes.func.isRequired,
+
+    /**
+     * Callback function to handle the event when the date picker is closed.
+     */
+    onClose: PropTypes.func.isRequired,
+};
