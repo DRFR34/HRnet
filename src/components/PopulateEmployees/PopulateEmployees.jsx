@@ -3,6 +3,12 @@ import employeesList from './employeesListMock.json'
 
 import './PopulateEmployees.scss';
 
+
+    /**
+     * For dev onlyPopulates the local storage with the list of employees and reloads the page.
+     *
+     * @return {void}
+     */
 export default function PopulateEmployees(){
 
     const populateEmployees = () => {
