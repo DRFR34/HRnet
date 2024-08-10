@@ -62,7 +62,7 @@ export const validateField = (fieldName, fieldValue) => {
             break;
         case 'birthDate':
             if (!fieldValue || !isValidDate(fieldValue)) {
-                errorMsg = 'Date must be in MM/DD/YYYY format.';
+                errorMsg = 'Date must be valid and in MM/DD/YYYY format.';
             } else if (new Date(fieldValue) >= new Date(new Date()
                 .setFullYear(new Date()
                     .getFullYear() - 16))) {
