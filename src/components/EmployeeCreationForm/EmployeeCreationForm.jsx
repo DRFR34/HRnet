@@ -1,6 +1,16 @@
 import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createEmployee, showModal, setError, setIsSubmitting, setFormData, setFieldsOnError, setFieldsBlurred, resetForm } from '../../redux/features/createEmployee/createEmployeeSlice.js';
+import PropTypes from 'prop-types';
+import {
+    createEmployee,
+    showModal,
+    setError,
+    setIsSubmitting,
+    setFormData,
+    setFieldsOnError,
+    setFieldsBlurred,
+    resetForm,
+} from '../../redux/features/createEmployee/createEmployeeSlice.js';
 import CustomDatePicker from '../CustomDatePicker/CustomDatePicker.jsx';
 import usaStates from '../../assets/data/usaStates.js';
 import departments from '../../assets/data/wealthHealthDepts.js';
@@ -10,6 +20,13 @@ import MonthIcon from '../IconsComponents/MonthIcon.jsx';
 import CustomSelect2 from '../CustomSelect2/CustomSelect2.jsx';
 import CEFormElement from '../CEFormElement/CEFormElement.jsx';
 
+import { formatDate, isValidDate, validateField, isFormValid } from '../../utils/employeeCreationUtils.js';
+
+/**
+ * EmployeeCreationForm component handles the creation of a new employee.
+ *
+ * @returns {JSX.Element} The rendered form component.
+ */
 export default function EmployeeCreationForm() {
     const dispatch = useDispatch();
     const { formData, fieldsOnError, isSubmitting, error } = useSelector(state => state.createEmployee);
@@ -23,38 +40,14 @@ export default function EmployeeCreationForm() {
     const birthDateInputRef = useRef(null);
     const startDateInputRef = useRef(null);
 
-    const formatDate = (date, format) => {
-        if (!date) return '';
-        const d = new Date(date);
-        const day = String(d.getDate()).padStart(2, '0');
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const year = d.getFullYear();
 
-        switch (format) {
-            case 'yyyy/MM/dd':
-                return `${year}/${month}/${day}`;
-            case 'MM/dd/yyyy':
-                return `${month}/${day}/${year}`;
-            case 'dd/MM/yyyy':
-                return `${day}/${month}/${year}`;
-            default:
-                return date;
-        }
-    };
-
-    const isValidDate = (dateString) => {
-        const regex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
-        if (!regex.test(dateString)) return false;
-
-        const parts = dateString.split('/');
-        const month = parseInt(parts[0], 10);
-        const day = parseInt(parts[1], 10);
-        const year = parseInt(parts[2], 10);
-
-        const date = new Date(year, month - 1, day);
-        return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
-    };
-
+    /**
+     * Handles changes to form fields. 
+     * Validating and updating the form data and error messages accordingly.
+     *
+     * @param {object} e - The event object containing information about the changed field.
+     * @return {void}
+     */
     const handleChange = (e) => {
         const { name, value } = e.target;
 
@@ -67,73 +60,50 @@ export default function EmployeeCreationForm() {
         }
 
         dispatch(setFormData({ [name]: value }));
-        validateField(name, value);
+        const errorMsg = validateField(name, value);
+        dispatch(setFieldsOnError({ [name]: errorMsg }));
     };
-
+    /**
+     * 
+     * Dispatches actions to set the field as blurred and updates error messages.
+     *
+     * @param {object} e - The event object containing information about the blurred field.
+     * @return {void}
+     */
     const handleBlur = (e) => {
         const { name, value } = e.target;
         dispatch(setFieldsBlurred({ [name]: true }));
-        validateField(name, value);
+        const errorMsg = validateField(name, value);
+        dispatch(setFieldsOnError({ [name]: errorMsg }));
     };
 
+
+    /**
+ * Updates the form data and error messages accordingly.
+ *
+ * @param {string} field - The name of the field that has been updated.
+ * @param {Date} date - The new date value for the field.
+ * @return {void}
+ */
     const handleDateChange = (field, date) => {
         const value = date ? formatDate(date, dateFormat) : '';
         dispatch(setFormData({ [field]: value }));
-        validateField(field, value);
+        const errorMsg = validateField(field, value);
+        dispatch(setFieldsOnError({ [field]: errorMsg }));
         handleCloseDatePicker(field);
     };
 
-    const validateField = (fieldName, fieldValue) => {
-        let errorMsg = '';
-
-        switch (fieldName) {
-            case 'firstName':
-            case 'lastName':
-                if (!/^[a-zA-Z]{2,}[a-zA-Z\s-]*$/.test(fieldValue)) {
-                    errorMsg = 'Must contain at least 2 characters.';
-                }
-                break;
-            case 'birthDate':
-                if (!fieldValue || !isValidDate(fieldValue)) {
-                    errorMsg = 'Date must be in MM/DD/YYYY format.';
-                } else if (new Date(fieldValue) >= new Date(new Date().setFullYear(new Date().getFullYear() - 16))) {
-                    errorMsg = 'The employee must be over 16 years old.';
-                }
-                break;
-            case 'startDate':
-                if (!fieldValue || !isValidDate(fieldValue)) {
-                    errorMsg = 'The date must be valid and in MM/DD/YYYY format.';
-                }
-                break;
-            case 'street':
-            case 'city':
-            case 'state':
-            case 'department':
-                if (!fieldValue.trim()) {
-                    errorMsg = 'This field must not be empty.';
-                }
-                break;
-            case 'zipCode':
-                if (!/^\d+$/.test(fieldValue)) {
-                    errorMsg = 'Must contain only numbers.';
-                }
-                break;
-            default:
-                break;
-        }
-
-        dispatch(setFieldsOnError({ [fieldName]: errorMsg }));
-    };
-
-    const isFormValid = () => {
-        return Object.values(fieldsOnError).every(x => x === '') && Object.values(formData).every(x => x !== '');
-    };
-
+    /**
+ * Handles the form submission event.
+ *
+ * @param {object} e - The event object containing information about the submission.
+ * @return {void}
+ */
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (isSubmitting) return;
 
-        if (!isFormValid()) {
+        if (!isFormValid(fieldsOnError, formData)) {
             dispatch(setFieldsBlurred({
                 firstName: true,
                 lastName: true,
@@ -151,7 +121,7 @@ export default function EmployeeCreationForm() {
         dispatch(setIsSubmitting(true));
 
         try {
-            const resultAction = await dispatch(createEmployee(formData));
+            const resultAction = dispatch(createEmployee(formData));
             unwrapResult(resultAction);
             dispatch(showModal());
             dispatch(resetForm());
@@ -165,6 +135,12 @@ export default function EmployeeCreationForm() {
         }
     };
 
+    /**
+ *Sets the value of the  specified `field` to `false`.
+ *
+ * @param {string} field - The name of the field to update.
+ * @return {void}
+ */
     const handleCloseDatePicker = (field) => {
         setShowDatePicker(prevState => ({
             ...prevState,
@@ -175,7 +151,6 @@ export default function EmployeeCreationForm() {
     return (
         <div className='formWrapper'>
             <form onSubmit={handleSubmit} className='form'>
-
                 <fieldset className='form__fieldset'>
                     <legend>Identity information</legend>
 
@@ -360,7 +335,7 @@ export default function EmployeeCreationForm() {
                     type='submit'
                     className='form__button'
                     aria-label='Save employee'
-                    disabled={!isFormValid() || isSubmitting}
+                    disabled={!isFormValid(fieldsOnError, formData) || isSubmitting}
                 >
                     Save
                 </button>
@@ -370,3 +345,22 @@ export default function EmployeeCreationForm() {
     );
 }
 
+/**
+ * PropTypes .
+ */
+EmployeeCreationForm.propTypes = {
+    formData: PropTypes.shape({
+        firstName: PropTypes.string,
+        lastName: PropTypes.string,
+        birthDate: PropTypes.string,
+        startDate: PropTypes.string,
+        street: PropTypes.string,
+        city: PropTypes.string,
+        state: PropTypes.string,
+        zipCode: PropTypes.string,
+        department: PropTypes.string,
+    }),
+    fieldsOnError: PropTypes.objectOf(PropTypes.string),
+    isSubmitting: PropTypes.bool,
+    error: PropTypes.string,
+};
