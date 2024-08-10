@@ -40,7 +40,6 @@ export default function EmployeeCreationForm() {
     const birthDateInputRef = useRef(null);
     const startDateInputRef = useRef(null);
 
-
     /**
      * Handles changes to form fields. 
      * Validating and updating the form data and error messages accordingly.
@@ -63,8 +62,8 @@ export default function EmployeeCreationForm() {
         const errorMsg = validateField(name, value);
         dispatch(setFieldsOnError({ [name]: errorMsg }));
     };
+
     /**
-     * 
      * Dispatches actions to set the field as blurred and updates error messages.
      *
      * @param {object} e - The event object containing information about the blurred field.
@@ -77,14 +76,13 @@ export default function EmployeeCreationForm() {
         dispatch(setFieldsOnError({ [name]: errorMsg }));
     };
 
-
     /**
- * Updates the form data and error messages accordingly.
- *
- * @param {string} field - The name of the field that has been updated.
- * @param {Date} date - The new date value for the field.
- * @return {void}
- */
+     * Updates the form data and error messages accordingly.
+     *
+     * @param {string} field - The name of the field that has been updated.
+     * @param {Date} date - The new date value for the field.
+     * @return {void}
+     */
     const handleDateChange = (field, date) => {
         const value = date ? formatDate(date, dateFormat) : '';
         dispatch(setFormData({ [field]: value }));
@@ -94,11 +92,11 @@ export default function EmployeeCreationForm() {
     };
 
     /**
- * Handles the form submission event.
- *
- * @param {object} e - The event object containing information about the submission.
- * @return {void}
- */
+     * Handles the form submission event.
+     *
+     * @param {object} e - The event object containing information about the submission.
+     * @return {void}
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (isSubmitting) return;
@@ -121,7 +119,7 @@ export default function EmployeeCreationForm() {
         dispatch(setIsSubmitting(true));
 
         try {
-            const resultAction = dispatch(createEmployee(formData));
+            const resultAction = await dispatch(createEmployee(formData));
             unwrapResult(resultAction);
             dispatch(showModal());
             dispatch(resetForm());
@@ -136,11 +134,11 @@ export default function EmployeeCreationForm() {
     };
 
     /**
- *Sets the value of the  specified `field` to `false`.
- *
- * @param {string} field - The name of the field to update.
- * @return {void}
- */
+     * Sets the value of the specified `field` to `false`.
+     *
+     * @param {string} field - The name of the field to update.
+     * @return {void}
+     */
     const handleCloseDatePicker = (field) => {
         setShowDatePicker(prevState => ({
             ...prevState,
@@ -346,7 +344,7 @@ export default function EmployeeCreationForm() {
 }
 
 /**
- * PropTypes .
+ * PropTypes for EmployeeCreationForm component.
  */
 EmployeeCreationForm.propTypes = {
     formData: PropTypes.shape({
