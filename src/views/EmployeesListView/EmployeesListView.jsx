@@ -20,8 +20,14 @@ import PaginationBar from '../../components/PaginationBar/PaginationBar';
 import '../../assets/scss/VarAndMixins.scss';
 import './EmployeesListView.scss';
 
+/**
+ * EmployeesListView is a component that displays a list of employees with sorting, searching, 
+ * and pagination functionalities. It utilizes a customizable table, search bar, and pagination 
+ * components to manage and display the data effectively.
+ * 
+ * @component
+ */
 export default function EmployeesListView() {
-
   const dispatch = useDispatch();
 
   const employees = useSelector(selectAllEmployees);
